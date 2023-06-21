@@ -71,6 +71,10 @@ function run() {
             const workdir = path.dirname(entrypoint);
             // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
             core.debug(`Using ${entrypoint} ...`);
+            if (process.env.ACTIONS_STEP_DEBUG) {
+                yield (0, utils_1.runCommand)('ls', ['-la', '.']);
+                yield (0, utils_1.runCommand)('pwd', []);
+            }
             yield (0, utils_1.runCommand)('npm', ['install', '-g', `winglang@${version}`]);
             core.info(`Installed winglang@${version}`);
             // if package.json exists, install dependencies
