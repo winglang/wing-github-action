@@ -18,6 +18,6 @@ RUN curl -LOk https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terr
 
 COPY . .
 
-RUN npm install && npm run build && npm run package
+RUN npm ci && npm run build && npm run package
 
 ENTRYPOINT ["node", "/dist/index.js"]
