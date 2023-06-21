@@ -1,4 +1,7 @@
 FROM node:18-slim
+LABEL org.opencontainers.image.source=https://github.com/winglang/wing-github-action
+LABEL org.opencontainers.image.description="Deploy Wing Apps with Github Actions"
+LABEL org.opencontainers.image.licenses=MIT
 
 RUN apt-get update -y && apt-get install -y unzip curl
 
@@ -13,7 +16,8 @@ RUN curl -LOk https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terr
   unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/local/bin/tf/versions/${TERRAFORM_VERSION} && \
   ln -s /usr/local/bin/tf/versions/${TERRAFORM_VERSION}/terraform /usr/local/bin/terraform
 
-COPY ./dist ./dist
-COPY ./plugins ./plugins
+COPY . .
+
+RUN npm install && npm run all
 
 ENTRYPOINT ["node", "/dist/index.js"]
