@@ -1,11 +1,31 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Winglang Deployment Github Action'
+description: 'Deploy your Winglang code with Github Actions to a cloud target of your choice.'
+author: 'Sebastian Korfmann'
 inputs:
-  milliseconds: # change this
+  entry:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'The entry file to use. e.g. main.wing'
+    default: ''
+  backend:
+    required: false
+    description: 'Which backend to inject. Right now only s3 is supported.'
+    default: 's3'
+  backend-scope:
+    required: false
+    description: 'Used as postfix for the backend state key. e.g. my-bucket/gh-user/gh-repo/gh-branch/backend-scope'
+    default: ''
+  working-directory:
+    required: false
+    description: 'The working directory to use. e.g. ./examples/with-dependencies. Will set backend-scope to the relative path of the cwd.'
+    default: ''
+  version:
+    required: false
+    description: 'The version of the Winglang CLI to use.'
+    default: 'latest'
+  target:
+    required: true
+    description: 'The target to deploy to. e.g. tf-aws, tf-gcp, tf-azure or awscdk.'
+    default: ''
 runs:
-  using: 'node16'
-  main: 'dist/index.js'
+  using: 'docker'
+  image: 'Dockerfile'

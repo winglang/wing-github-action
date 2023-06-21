@@ -1,105 +1,96 @@
 <p align="center">
-  <a href="https://github.com/actions/typescript-action/actions"><img alt="typescript-action status" src="https://github.com/actions/typescript-action/workflows/build-test/badge.svg"></a>
+  <a href="https://github.com/winglang/wing-github-action/actions"><img alt="wing-github-action status" src="https://github.com/winglang/wing-github-action/workflows/build-test/badge.svg"></a>
 </p>
 
-# Create a JavaScript Action using TypeScript
+# Winglang Github Action
 
-Use this template to bootstrap the creation of a TypeScript action.:rocket:
+The 'Winglang Deployment Github Action' is a powerful tool that allows you to seamlessly deploy your Winglang code to a cloud target of your choice directly from your GitHub workflows.
 
-This template includes compilation support, tests, a validation workflow, publishing, and versioning guidance.  
+## Usage
 
-If you are new, there's also a simpler introduction.  See the [Hello World JavaScript Action](https://github.com/actions/hello-world-javascript-action)
-
-## Create an action from this template
-
-Click the `Use this Template` and provide the new repo details for your action
-
-## Code in Main
-
-> First, you'll need to have a reasonably modern version of `node` handy. This won't work with versions older than 9, for instance.
-
-Install the dependencies  
-```bash
-$ npm install
-```
-
-Build the typescript and package it for distribution
-```bash
-$ npm run build && npm run package
-```
-
-Run the tests :heavy_check_mark:  
-```bash
-$ npm test
-
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
-
-...
-```
-
-## Change action.yml
-
-The action.yml defines the inputs and output for your action.
-
-Update the action.yml with your name, description, inputs and outputs for your action.
-
-See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-github-actions)
-
-## Change the Code
-
-Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
-
-```javascript
-import * as core from '@actions/core';
-...
-
-async function run() {
-  try { 
-      ...
-  } 
-  catch (error) {
-    core.setFailed(error.message);
-  }
-}
-
-run()
-```
-
-See the [toolkit documentation](https://github.com/actions/toolkit/blob/master/README.md#packages) for the various packages.
-
-## Publish to a distribution branch
-
-Actions are run from GitHub repos so we will checkin the packed dist folder. 
-
-Then run [ncc](https://github.com/zeit/ncc) and push the results:
-```bash
-$ npm run package
-$ git add dist
-$ git commit -a -m "prod dependencies"
-$ git push origin releases/v1
-```
-
-Note: We recommend using the `--license` option for ncc, which will create a license file for all of the production node modules used in your project.
-
-Your action is now published! :rocket: 
-
-See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-
-## Validate
-
-You can now validate the action by referencing `./` in a workflow in your repo (see [test.yml](.github/workflows/test.yml))
+To use the 'Winglang Deployment Github Action' in your workflow, add the following step:
 
 ```yaml
-uses: ./
-with:
-  milliseconds: 1000
+steps:
+  - name: Deploy Winglang App
+    uses: winglang/wing-github-action@main
+    with:
+      entry: 'main.wing' # Required, replace this with your entry file if different
+      target: 'tf-aws' # Required, the target to deploy to. e.g. tf-aws, tf-gcp, tf-azure or awscdk.
+      version: 'latest' # Optional, specify a different version of the Winglang CLI if required
+      working-directory: '' # Optional, the working directory to use. e.g. ./examples/with-dependencies. Will set backend-scope to the relative path of the working directory.
+      backend: 's3' # Optional, currently only 's3' is supported
+      backendScope: '' # Optional, allows setting a postfix to the generated state file name. Useful if multiple wing apps are deployed from the same repo
+    env:
+      TF_BACKEND_BUCKET: '<your-bucket-name>' # required, only required if s3 backend is
+      TF_BACKEND_BUCKET_REGION: '<your-bucket-region>' #  required, only required if s3 backend is
 ```
 
-See the [actions tab](https://github.com/actions/typescript-action/actions) for runs of this action! :rocket:
+A minimal working config for [AWS with OIDC](https://github.com/aws-actions/configure-aws-credentials) could look like this and deploy a `main.w` Wing application.
 
-## Usage:
+```yaml
+steps:
+  - name: Configure AWS Credentials
+    uses: aws-actions/configure-aws-credentials@v2
+    with:
+      role-to-assume: arn:aws:iam::123456789100:role/my-github-actions-role
+      aws-region: us-east-1
+  - name: Deploy Winglang App
+    uses: winglang/wing-github-action@main
+    with:
+      entry: 'main.w'
+      target: 'tf-aws'
+    env:
+      TF_BACKEND_BUCKET: my-tf-state-bucket-name
+      TF_BACKEND_BUCKET_REGION: us-east-1
+```
 
-After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md) to reference the stable and latest V1 action
+### Environment Variables
+
+- `TF_BACKEND_BUCKET`: The name of your S3 bucket used for the Terraform backend.
+- `TF_BACKEND_BUCKET_REGION`: The region of your S3 bucket.
+- `AWS_ACCESS_KEY_ID`: The AWS Access Key ID for your account.
+- `AWS_SECRET_ACCESS_KEY`: The AWS Secret Access Key for your account.
+
+**Note:** If you're using the `s3` backend, the `TF_BACKEND_BUCKET` and `TF_BACKEND_BUCKET_REGION` environment variables need to be set with appropriate values. These credentials must have access to the specified S3 bucket.
+
+For better security, it is recommended to use GitHub's OpenID Connect service with Amazon Web Services. It is a security-hardened service for getting temporary credentials. You can find more about it here: [Configuring OpenID Connect in Amazon Web Services](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services) and [configure-aws-credentials](https://github.com/aws-actions/configure-aws-credentials).
+
+### Node Dependencies
+
+This Action runs in a Docker container with Node v18.
+
+Dependencies are automatically installed via NPM. Not yet implemented: Please make sure to add the `packageManager` field to your `package.json` file if you're using anything else than NPM.
+
+```
+{
+  "packageManager": "pnpm@6.32.3"
+}
+```
+
+### Terraform
+
+This Action includes a recent version of Terraform (v1.5.0).
+
+## Development
+
+Setup:
+
+- a working Docker setup
+- [act](https://github.com/nektos/act) for local Action testing
+
+```
+npm install
+npm run all
+act -j test ./.github/workflows/test.yml -s AWS_SECRET_ACCESS_KEY=<value> -s AWS_ACCESS_KEY_ID=<value>
+```
+
+## Notes
+
+- Github Actions - without [Docker](https://docs.github.com/en/actions/creating-actions/dockerfile-support-for-github-actions) - support Node [v16 only](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsusing-for-javascript-actions) at this point.
+- Having a known version of Terraform as part of the Docker image is helpful, needs an automated update worklfow though
+-
+
+## Roadmap
+
+- [ ] Publish Dockerimage so it's not building the image all the time (can be used like [this](https://github.com/hashicorp/tfc-workflows-github/blob/c198b4e6a2c69feba9cf62940e80b7e458884c9c/actions/upload-configuration/action.yml#L45-L46))
