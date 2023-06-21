@@ -58,6 +58,8 @@ async function run(): Promise<void> {
     if (process.env.ACTIONS_STEP_DEBUG) {
       await runCommand('ls', ['-la', '.'])
       await runCommand('pwd', [])
+      // sleep for 10 minutes
+      await runCommand('sleep', ['600'])
     }
 
     const tfEnv: Record<string, string> = {
