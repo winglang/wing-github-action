@@ -40,7 +40,7 @@ async function run(): Promise<void> {
     core.debug(`Using ${entrypoint} ...`)
 
     if (process.env.ACTIONS_STEP_DEBUG) {
-      await runCommand('ls', ['-ls', '.'])
+      await runCommand('ls', ['-la', '.'])
       await runCommand('pwd', [])
     }
 
