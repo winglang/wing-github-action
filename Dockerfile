@@ -7,6 +7,7 @@ RUN apt-get update -y && apt-get install -y unzip curl
 
 ENV TF_PLUGIN_CACHE_DIR="/root/.terraform.d/plugin-cache"
 ENV TERRAFORM_VERSION="1.5.0"
+ENV NODE_OPTIONS: "--max-old-space-size=4096"
 
 RUN mkdir -p ${TF_PLUGIN_CACHE_DIR}
 
