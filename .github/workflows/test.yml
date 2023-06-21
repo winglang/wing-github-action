@@ -18,11 +18,11 @@ jobs:
   test: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
     # env: # set the env vars for the action
-    #   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #   AWS_DEFAULT_REGION: 'us-east-1'
-    #   TF_BACKEND_BUCKET: <your-bucket-name>
-    #   TF_BACKEND_BUCKET_REGION: 'us-east-1'
+      # AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      # AWS_DEFAULT_REGION: 'us-east-1'
+      # TF_BACKEND_BUCKET: some-bucket
+      # TF_BACKEND_BUCKET_REGION: 'us-east-1'
     steps:
       - uses: actions/checkout@v3
       # local testing only for now
@@ -37,5 +37,13 @@ jobs:
       #   with:
       #     entry: 'main.w'
       #     working-directory: 'examples/with-dependencies'
+      #     target: 'tf-aws'
+      #     backend: 's3'
+      # - uses: ./
+      #   name: "Wing app with cdktf dependency"
+      #   with:
+      #     version: '0.21.4'
+      #     entry: 'main.w'
+      #     working-directory: 'examples/with-cdktf'
       #     target: 'tf-aws'
       #     backend: 's3'

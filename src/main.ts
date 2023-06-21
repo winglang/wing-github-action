@@ -39,11 +39,6 @@ async function run(): Promise<void> {
     // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
     core.debug(`Using ${entrypoint} ...`)
 
-    if (process.env.ACTIONS_STEP_DEBUG) {
-      await runCommand('ls', ['-la', '.'])
-      await runCommand('pwd', [])
-    }
-
     await runCommand('npm', ['install', '-g', `winglang@${version}`])
     core.info(`Installed winglang@${version}`)
 
@@ -55,13 +50,6 @@ async function run(): Promise<void> {
       core.info(`No package.json found, skipping npm ci`)
     }
 
-    if (process.env.ACTIONS_STEP_DEBUG) {
-      await runCommand('ls', ['-la', '.'])
-      await runCommand('pwd', [])
-      // sleep for 10 minutes
-      await runCommand('sleep', ['600'])
-    }
-
     const tfEnv: Record<string, string> = {
       ...process.env,
       TF_IN_AUTOMATION: 'true'
@@ -69,18 +57,15 @@ async function run(): Promise<void> {
 
     if (backend === 's3') {
       core.info(`Injecting backend config for S3`)
-      await runCommand(
-        'wing',
-        ['compile', '-p', '/plugins/backend.s3.js', '-t', target, entrypoint],
-        {
-          env: {
-            ...tfEnv,
-            TF_BACKEND_STATE_FILE: stateFile()
-          }
+
+      await runCommand('wing', ['compile', '-t', target, entrypoint], {
+        env: {
+          ...tfEnv,
+          TF_BACKEND_STATE_FILE: stateFile()
         }
-      )
+      })
     } else {
-      await runCommand('wing', ['compile', '-t', target, entrypoint])
+      await runCommand('wing', ['compile', '--debug', '-t', target, entrypoint])
     }
 
     const tfWorkDir = path.join(
