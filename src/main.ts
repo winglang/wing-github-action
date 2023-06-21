@@ -58,12 +58,23 @@ async function run(): Promise<void> {
     if (backend === 's3') {
       core.info(`Injecting backend config for S3`)
 
-      await runCommand('wing', ['compile', '-t', target, entrypoint], {
-        env: {
-          ...tfEnv,
-          TF_BACKEND_STATE_FILE: stateFile()
+      await runCommand(
+        'wing',
+        [
+          'compile',
+          '--plugins',
+          '/action/plugins/backend.s3.js',
+          '-t',
+          target,
+          entrypoint
+        ],
+        {
+          env: {
+            ...tfEnv,
+            TF_BACKEND_STATE_FILE: stateFile()
+          }
         }
-      })
+      )
     } else {
       await runCommand('wing', ['compile', '--debug', '-t', target, entrypoint])
     }

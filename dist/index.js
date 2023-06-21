@@ -84,7 +84,14 @@ function run() {
             const tfEnv = Object.assign(Object.assign({}, process.env), { TF_IN_AUTOMATION: 'true' });
             if (backend === 's3') {
                 core.info(`Injecting backend config for S3`);
-                yield (0, utils_1.runCommand)('wing', ['compile', '-t', target, entrypoint], {
+                yield (0, utils_1.runCommand)('wing', [
+                    'compile',
+                    '--plugins',
+                    '/action/plugins/backend.s3.js',
+                    '-t',
+                    target,
+                    entrypoint
+                ], {
                     env: Object.assign(Object.assign({}, tfEnv), { TF_BACKEND_STATE_FILE: (0, utils_1.stateFile)() })
                 });
             }
