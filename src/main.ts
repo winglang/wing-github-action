@@ -55,6 +55,11 @@ async function run(): Promise<void> {
       core.info(`No package.json found, skipping npm ci`)
     }
 
+    if (process.env.ACTIONS_STEP_DEBUG) {
+      await runCommand('ls', ['-la', '.'])
+      await runCommand('pwd', [])
+    }
+
     const tfEnv: Record<string, string> = {
       ...process.env,
       TF_IN_AUTOMATION: 'true'

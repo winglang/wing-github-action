@@ -85,6 +85,10 @@ function run() {
             else {
                 core.info(`No package.json found, skipping npm ci`);
             }
+            if (process.env.ACTIONS_STEP_DEBUG) {
+                yield (0, utils_1.runCommand)('ls', ['-la', '.']);
+                yield (0, utils_1.runCommand)('pwd', []);
+            }
             const tfEnv = Object.assign(Object.assign({}, process.env), { TF_IN_AUTOMATION: 'true' });
             if (backend === 's3') {
                 core.info(`Injecting backend config for S3`);
