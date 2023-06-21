@@ -39,6 +39,11 @@ async function run(): Promise<void> {
     // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
     core.debug(`Using ${entrypoint} ...`)
 
+    if (process.env.ACTIONS_STEP_DEBUG === 'true') {
+      await runCommand('ls', ['-ls', '.'])
+      await runCommand('pwd', [])
+    }
+
     await runCommand('npm', ['install', '-g', `winglang@${version}`])
     core.info(`Installed winglang@${version}`)
 
