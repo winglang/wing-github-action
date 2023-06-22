@@ -1,5 +1,5 @@
-name: 'Winglang Deployment Github Action'
-description: 'Deploy your Winglang code with Github Actions to a cloud target of your choice.'
+name: 'Winglang Pull Request Diff Github Action'
+description: 'Get a diff comment on your Pull Request.'
 author: 'Sebastian Korfmann'
 inputs:
   entry:
@@ -26,7 +26,9 @@ inputs:
     required: true
     description: 'The target to deploy to. e.g. tf-aws, tf-gcp, tf-azure or awscdk.'
     default: ''
+  github-token:
+    required: true
+    description: 'The Github token to use. e.g. ${{ secrets.GITHUB_TOKEN }}'
 runs:
   using: 'docker'
-  # image: 'docker://ghcr.io/winglang/wing-github-action:main'
   image: 'Dockerfile'
