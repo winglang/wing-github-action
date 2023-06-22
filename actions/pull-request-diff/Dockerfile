@@ -1,4 +1,4 @@
-FROM foo
+FROM ghcr.io/winglang/wing-github-action:main
 # ghcr.io/winglang/wing-github-action:main
 
 RUN mkdir /action
