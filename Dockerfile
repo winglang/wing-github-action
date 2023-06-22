@@ -14,9 +14,3 @@ RUN curl -LOk https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terr
   mkdir -p /usr/local/bin/tf/versions/${TERRAFORM_VERSION} && \
   unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/local/bin/tf/versions/${TERRAFORM_VERSION} && \
   ln -s /usr/local/bin/tf/versions/${TERRAFORM_VERSION}/terraform /usr/local/bin/terraform
-
-RUN mkdir /action
-COPY ./dist /action/dist
-COPY ./plugins /action/plugins
-
-ENTRYPOINT ["node", "/action/dist/index.js"]
