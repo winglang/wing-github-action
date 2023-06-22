@@ -104,7 +104,7 @@ function run() {
                     target,
                     entrypoint
                 ], {
-                    env: Object.assign(Object.assign({}, tfEnv), { TF_BACKEND_STATE_FILE: (0, utils_1.stateFile)(process.env.BASE_REF) })
+                    env: Object.assign(Object.assign({}, tfEnv), { TF_BACKEND_STATE_FILE: (0, utils_1.stateFile)(process.env.GITHUB_BASE_REF) })
                 });
             }
             else {
