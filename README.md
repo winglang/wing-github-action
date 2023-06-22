@@ -4,6 +4,8 @@
 
 # Winglang Github Action
 
+*Note:* This is an alpha version! Interface is likely to change. Recommended usage for testing purposes only.
+
 The 'Winglang Deployment Github Action' is a powerful tool that allows you to seamlessly deploy your Winglang code to a cloud target of your choice directly from your GitHub workflows.
 
 ## Usage
