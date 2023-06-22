@@ -28,7 +28,7 @@ inputs:
     default: ''
   github-token:
     required: true
-    description: 'The Github token to use. e.g. ${{ secrets.GITHUB_TOKEN }}'
+    description: 'The Github token to use.'
 runs:
   using: 'docker'
   image: 'Dockerfile'
