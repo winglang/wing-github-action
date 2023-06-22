@@ -28,5 +28,5 @@ inputs:
     default: ''
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/winglang/wing-github-action:main'
-  # image: 'Dockerfile'
+  # image: 'docker://ghcr.io/winglang/wing-github-action:main'
+  image: 'Dockerfile'

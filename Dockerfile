@@ -1,4 +1,4 @@
-FROM node:18-bullseye-slim
+FROM node:18-slim
 LABEL org.opencontainers.image.source=https://github.com/winglang/wing-github-action
 LABEL org.opencontainers.image.description="Deploy Wing Apps with Github Actions"
 LABEL org.opencontainers.image.licenses=MIT
@@ -16,8 +16,7 @@ RUN curl -LOk https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terr
   ln -s /usr/local/bin/tf/versions/${TERRAFORM_VERSION}/terraform /usr/local/bin/terraform
 
 RUN mkdir /action
-COPY . /action
-
-RUN cd /action && npm ci && npm run build && npm run package
+COPY ./dist /action/dist
+COPY ./plugins /action/plugins
 
 ENTRYPOINT ["node", "/action/dist/index.js"]
