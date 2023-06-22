@@ -95,7 +95,7 @@ async function run(): Promise<void> {
         {
           env: {
             ...tfEnv,
-            TF_BACKEND_STATE_FILE: stateFile(process.env.BASE_REF!),
+            TF_BACKEND_STATE_FILE: stateFile(process.env.GITHUB_BASE_REF!),
           }
         }
       )

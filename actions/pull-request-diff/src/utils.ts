@@ -31,7 +31,7 @@ export const runCommand = async (
   }
 }
 
-export const stateFile = (refName = process.env.GITHUB_BASE_REF): string => {
+export const stateFile = (refName = process.env.GITHUB_REF_NAME): string => {
   const cwd: string = core.getInput('working-directory')
   const backendScope: string = core.getInput('backend-scope')
   const repo = process.env.GITHUB_REPOSITORY
