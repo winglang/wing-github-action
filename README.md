@@ -93,4 +93,11 @@ act -j test ./.github/workflows/test.yml -s AWS_SECRET_ACCESS_KEY=<value> -s AWS
 
 ## Roadmap
 
-- [ ] Publish Dockerimage so it's not building the image all the time (can be used like [this](https://github.com/hashicorp/tfc-workflows-github/blob/c198b4e6a2c69feba9cf62940e80b7e458884c9c/actions/upload-configuration/action.yml#L45-L46))
+- [x] Deploy action
+- [ ] Unit tests
+- [ ] Pull Request plan action which posts the plan against `main` as a comment on the PR
+- [ ] Build base image which includes Terraform. The action itself should use the default on demand build since it simplifies the versioning quite a bit
+- [ ] Wing Backend (once implemented)
+- [ ] Generate Wing architecture diagram and post to PR
+- [ ] AWS CDK support (not sure if that's already working)
+- [ ] Pull Request ephemeral deploy action
