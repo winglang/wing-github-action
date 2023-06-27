@@ -32,21 +32,63 @@ steps:
 A minimal working config for [AWS with OIDC](https://github.com/aws-actions/configure-aws-credentials) could look like this and deploy a `main.w` Wing application.
 
 ```yaml
-steps:
-  - name: Configure AWS Credentials
-    uses: aws-actions/configure-aws-credentials@v2
-    with:
-      role-to-assume: arn:aws:iam::123456789100:role/my-github-actions-role
-      aws-region: us-east-1
-  - name: Deploy Winglang App
-    uses: winglang/wing-github-action/actions/pull-request-diff@main
-    with:
-      entry: 'main.w'
-      target: 'tf-aws'
-      github-token: ${{ secrets.GITHUB_TOKEN }}
-    env:
-      TF_BACKEND_BUCKET: my-tf-state-bucket-name
-      TF_BACKEND_BUCKET_REGION: us-east-1
+on: 
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read  # This is required for actions/checkout
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  TF_BACKEND_BUCKET: ${{ secrets.TF_BACKEND_BUCKET }}
+  TF_BACKEND_BUCKET_REGION: ${{ secrets.AWS_REGION }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: gh-actions-winglang
+          aws-region: ${{ env.AWS_REGION}}
+      - name: Deploy Winglang App
+        uses: winglang/wing-github-action/actions/deploy@main
+        with:
+          entry: main.w
+          target: 'tf-aws'
+```
+
+Example of OIDC IAM role trust policy:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::11111111111:oidc-provider/token.actions.githubusercontent.com"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+          "token.actions.githubusercontent.com:sub": [
+              "repo:OWNER/REPO:pull_request",
+              "repo:OWNER/REPO:ref:refs/heads/main"
+          ]
+        }
+      }
+    }
+  ]
+}
 ```
 
 ### Environment Variables
