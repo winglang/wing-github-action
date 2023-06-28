@@ -11,39 +11,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: |
-          npm install
-      - run: |
-          npm run all
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Rebuild the dist/ directories
+        run: |
+          pnpm run -r build
+          pnpm run -r package
+
   test: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
-    # env: # set the env vars for the action
-    #   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #   AWS_DEFAULT_REGION: 'us-east-1'
-    #   TF_BACKEND_BUCKET: foo
-    #   TF_BACKEND_BUCKET_REGION: 'us-east-1'
+    env:
+      AWS_DEFAULT_REGION: 'us-east-1'
+      TF_BACKEND_BUCKET: ${{ secrets.TF_BACKEND_BUCKET }}
+      TF_BACKEND_BUCKET_REGION: 'us-east-1'
     steps:
       - uses: actions/checkout@v3
-      # local testing only for now
-      # - uses: ./
-      #   name: "Plain Wing app"
-      #   with:
-      #     entry: './examples/plain/main.w'
-      #     target: 'tf-aws'
-      #     backend: 's3'
-      # - uses: ./
-      #   name: "Wing app with npm dependencies"
-      #   with:
-      #     entry: 'main.w'
-      #     working-directory: 'examples/with-dependencies'
-      #     target: 'tf-aws'
-      #     backend: 's3'
-      # - uses: ./actions/deploy
-      #   name: "Wing app with cdktf dependency"
-      #   with:
-      #     version: '0.21.4'
-      #     entry: 'main.w'
-      #     working-directory: 'examples/with-cdktf'
-      #     target: 'tf-aws'
-      #     backend: 's3'
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: gh-action-winglang
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+      - uses: ./actions/deploy
+        name: "Plain Wing app"
+        with:
+          entry: 'main.w'
+          working-directory: './examples/plain'
+          target: 'tf-aws'
+          backend: 's3'
