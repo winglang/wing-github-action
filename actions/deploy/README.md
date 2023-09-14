@@ -36,7 +36,6 @@ on: [pull_request]
 permissions:
   id-token: write      # required for requesting the JWT
   contents: read       # required for checkout
-  pull-requests: write # required for posting comments to pull requests
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
@@ -55,8 +54,8 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           role-session-name: gh-actions-winglang
           aws-region: ${{ env.AWS_REGION }}
-      - name: Terraform Plan
-        uses: winglang/wing-github-action/actions/pull-request-diff@main
+      - name: Terraform Deploy
+        uses: winglang/wing-github-action/actions/deploy@0.1.0
         with:
           entry: main.w
           target: 'tf-aws'

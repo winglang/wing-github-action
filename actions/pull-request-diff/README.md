@@ -32,7 +32,7 @@ steps:
 A minimal working config for [AWS with OIDC](https://github.com/aws-actions/configure-aws-credentials) could look like this and deploy a `main.w` Wing application.
 
 ```yaml
-on: 
+on:
   push:
     branches:
       - main
@@ -40,6 +40,7 @@ on:
 permissions:
   id-token: write # This is required for requesting the JWT
   contents: read  # This is required for actions/checkout
+  pull-requests: write # required for posting comments to pull requests
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
@@ -58,8 +59,8 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           role-session-name: gh-actions-winglang
           aws-region: ${{ env.AWS_REGION}}
-      - name: Deploy Winglang App
-        uses: winglang/wing-github-action/actions/deploy@main
+      - name: Terraform Plan
+        uses: winglang/wing-github-action/actions/pull-request-diff@0.1.0
         with:
           entry: main.w
           target: 'tf-aws'
