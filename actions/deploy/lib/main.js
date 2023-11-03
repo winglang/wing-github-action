@@ -79,17 +79,17 @@ function run() {
                 core.info(`Injecting backend config for S3`);
                 yield (0, utils_1.runCommand)('wing', [
                     'compile',
-                    '--plugins',
-                    '/action/plugins/backend.s3.js',
-                    '-t',
+                    '--platform',
                     target,
+                    '--platform',
+                    '/action/platforms/backend.s3.js',
                     entrypoint
                 ], {
                     env: Object.assign(Object.assign({}, tfEnv), { TF_BACKEND_STATE_FILE: (0, utils_1.stateFile)() })
                 });
             }
             else {
-                yield (0, utils_1.runCommand)('wing', ['compile', '--debug', '-t', target, entrypoint]);
+                yield (0, utils_1.runCommand)('wing', ['compile', '--debug', '--platform', target, entrypoint]);
             }
             const tfWorkDir = path.join(process.cwd(), workdir, 'target', `${main}.${target.replace('-', '')}`);
             yield (0, utils_1.runCommand)('terraform', ['init'], {

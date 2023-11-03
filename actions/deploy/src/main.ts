@@ -62,10 +62,10 @@ async function run(): Promise<void> {
         'wing',
         [
           'compile',
-          '--plugins',
-          '/action/plugins/backend.s3.js',
-          '-t',
+          '--platform',
           target,
+          '--platform',
+          '/action/platforms/backend.s3.js',          
           entrypoint
         ],
         {
@@ -76,7 +76,7 @@ async function run(): Promise<void> {
         }
       )
     } else {
-      await runCommand('wing', ['compile', '--debug', '-t', target, entrypoint])
+      await runCommand('wing', ['compile', '--debug', '--platform', target, entrypoint])
     }
 
     const tfWorkDir = path.join(
