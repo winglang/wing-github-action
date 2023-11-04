@@ -66,13 +66,14 @@ function run() {
             core.debug(`Using ${entrypoint} ...`);
             yield (0, utils_1.runCommand)('npm', ['install', '-g', `winglang@${version}`]);
             core.info(`Installed winglang@${version}`);
+            yield (0, utils_1.runCommand)('npm', ['install', '-g', `@antfu/ni`]);
             // if package.json exists, install dependencies
             if (fs.existsSync(path.join(process.cwd(), 'package.json'))) {
-                yield (0, utils_1.runCommand)('npm', ['ci']);
-                core.info(`Installed NPM dependencies with npm ci`);
+                yield (0, utils_1.runCommand)('ni', ['--frozen']);
+                core.info(`Installed NPM dependencies with ni --frozen`);
             }
             else {
-                core.info(`No package.json found, skipping npm ci`);
+                core.info(`No package.json found, skipping ni --frozen`);
             }
             const tfEnv = Object.assign(Object.assign({}, process.env), { TF_IN_AUTOMATION: 'true' });
             if (backend === 's3') {
