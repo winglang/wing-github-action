@@ -65,13 +65,14 @@ async function run(): Promise<void> {
 
     await runCommand('npm', ['install', '-g', `winglang@${version}`])
     core.info(`Installed winglang@${version}`)
+    await runCommand('npm', ['install', '-g', `@antfu/ni`])
 
     // if package.json exists, install dependencies
     if (fs.existsSync(path.join(process.cwd(), 'package.json'))) {
-      await runCommand('npm', ['ci'])
-      core.info(`Installed NPM dependencies with npm ci`)
+      await runCommand('ni', ['--frozen'])
+      core.info(`Installed NPM dependencies with ni --frozen`)
     } else {
-      core.info(`No package.json found, skipping npm ci`)
+      core.info(`No package.json found, skipping ni --frozen`)
     }
 
     const tfEnv: Record<string, string> = {
