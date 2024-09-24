@@ -8,9 +8,17 @@ import {runCommand, stateFile} from './utils'
 const postComment = async (output: string): Promise<void> => {
   const githubToken = core.getInput('github-token')
   const octokit = github.getOctokit(githubToken)
+  let trimmed = false
+
+  if (output.length > 65000) {
+    output = output.slice(0, 65000)
+    trimmed = true
+  }
 
   const githubContext = github.context
   const comment = `#### Terraform Plan
+
+${trimmed ? 'Plan is too large to display in a comment. Check the build logs for the full plan.' : ''}
 
 <details><summary>Show Plan</summary>
 
@@ -20,7 +28,8 @@ ${output}
 
 </details>
 `
-  // creat a comment on the PR
+
+  // create a comment on the PR
   await octokit.rest.issues.createComment({
     ...githubContext.repo,
     issue_number: githubContext.payload.pull_request?.number!,
