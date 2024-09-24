@@ -48,8 +48,15 @@ const postComment = (output) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const githubToken = core.getInput('github-token');
     const octokit = github.getOctokit(githubToken);
+    let trimmed = false;
+    if (output.length > 65000) {
+        output = output.slice(0, 65000);
+        trimmed = true;
+    }
     const githubContext = github.context;
     const comment = `#### Terraform Plan
+
+${trimmed ? 'Plan is too large to display in a comment. Check the build logs for the full plan.' : ''}
 
 <details><summary>Show Plan</summary>
 
@@ -59,7 +66,7 @@ ${output}
 
 </details>
 `;
-    // creat a comment on the PR
+    // create a comment on the PR
     yield octokit.rest.issues.createComment(Object.assign(Object.assign({}, githubContext.repo), { issue_number: (_a = githubContext.payload.pull_request) === null || _a === void 0 ? void 0 : _a.number, body: comment }));
 });
 function run() {
