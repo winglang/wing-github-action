@@ -17,7 +17,7 @@ steps:
   - name: Deploy Winglang App
     uses: winglang/wing-github-action/actions/deploy@main
     with:
-      entry: 'main.wing' # Required, replace this with your entry file if different
+      entry: 'main.w' # Required, replace this with your entry file if different
       target: 'tf-aws' # Required, the target to deploy to. e.g. tf-aws, tf-gcp, tf-azure or awscdk.
       version: 'latest' # Optional, specify a different version of the Winglang CLI if required
       working-directory: '' # Optional, the working directory to use. e.g. ./examples/with-dependencies. Will set backend-scope to the relative path of the working directory.
